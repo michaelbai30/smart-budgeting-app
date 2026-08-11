@@ -9,10 +9,15 @@ import SwiftUI
 
 struct SettingsView: View{
     @Environment(\.dismiss) var dismiss
-    var budgetManager: BudgetManager
+    var budgetManager: BudgetManager // A struct member with no default value must be given
+
     @State private var incomeInput: String = ""
     @State private var expensesInput: String = ""
-    @State private var savingsInput: String = ""
+    @State private var savingsPercentage: Double = 20.0 // Default value
+
+    private var savingsAmount: Double{
+        budgetManager.monthlyIncome * (savingsPercentage / 100)
+    }
 
     var body: some View{
         Form{
@@ -22,18 +27,26 @@ struct SettingsView: View{
             Section(){
                 TextField("Fixed Expenses", text:$expensesInput)
             }
-            Section(){
-                TextField("Savings %", text:$savingsInput)
+            Section("Savings Goal"){
+                VStack(alignment: .leading, spacing: 12){
+                    // Slider
+                    Slider(value: $savingsPercentage, in: 0...100, step: 1)
+
+                    // Show percentage
+                    Text("\(Int(savingsPercentage))%").font(.title2).fontWeight(.semibold).frame(maxWidth: .infinity, alignment: .center)
+                    
+                    // Show dollar amount
+                    Text("You'll save $\(savingsAmount, specifier: "%.2f") per month!").font(.caption).foregroundStyle(.secondary)
+                }
             }
             Section{
                 Button("Save Changes"){
                     if let income = Double(incomeInput),
-                       let expenses = Double(expensesInput),
-                       let savings = Double(savingsInput){
+                       let expenses = Double(expensesInput) {
                         budgetManager.monthlyIncome = income
                         budgetManager.monthlyFixedExpenses = expenses
-                        budgetManager.monthlySavingsGoalDecimal = savings / 100
-                        
+                        budgetManager.monthlySavingsGoalDecimal = savingsPercentage / 100
+
                         dismiss()
                     }
                 }
@@ -42,7 +55,11 @@ struct SettingsView: View{
         }.onAppear{
             incomeInput = String(budgetManager.monthlyIncome)
             expensesInput = String(budgetManager.monthlyFixedExpenses)
-            savingsInput = String(budgetManager.monthlySavingsGoalDecimal * 100)
+            savingsPercentage = budgetManager.monthlySavingsGoalDecimal * 100
         }
     }
+}
+
+#Preview{
+    SettingsView(budgetManager: BudgetManager())
 }
