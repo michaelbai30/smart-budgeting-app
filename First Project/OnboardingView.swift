@@ -58,3 +58,6 @@ struct OnboardingView: View {
         }
     }
 }
+#Preview{
+    OnboardingView(budgetManager: BudgetManager())
+}

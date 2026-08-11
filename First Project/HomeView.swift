@@ -43,3 +43,6 @@ struct HomeView: View{
         }
     }
 }
+#Preview{
+    HomeView(budgetManager: BudgetManager())
+}
