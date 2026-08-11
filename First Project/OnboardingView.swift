@@ -10,7 +10,7 @@ struct OnboardingView: View {
     var budgetManager: BudgetManager
     @State var incomeInput: String = ""
     @State var fixedExpensesInput: String = ""
-    @State var savingsPercentageStr: String = ""
+    @State var savingsPercentage: Double = 20.0
     
     @State var currentStep: Int = 1 // Which screen am I on?
     
@@ -21,7 +21,6 @@ struct OnboardingView: View {
                 TextField("Enter your monthly income in dollars", text: $incomeInput)
                 
                 Button("Next"){
-                    // TODO
                     currentStep += 1
                 }
             }
@@ -32,7 +31,6 @@ struct OnboardingView: View {
                 TextField("Enter your monthly fixed expenses in dollars", text: $fixedExpensesInput)
                 
                 Button("Next"){
-                    // TODO
                     currentStep += 1
                 }
             }
@@ -40,21 +38,29 @@ struct OnboardingView: View {
         else if currentStep == 3{
             VStack{
                 Text("Step \(currentStep) out of 3")
-                TextField("Enter the amount you want to save per month as a percentage of your income", text: $savingsPercentageStr)
-                
+                VStack(alignment: .leading, spacing: 12){
+                    Slider(value: $savingsPercentage, in: 0...100, step: 1)
+
+                    Text("\(Int(savingsPercentage))%").font(.title2).fontWeight(.semibold).frame(maxWidth: .infinity, alignment: .center)
+
+                    let savingsAmount = (Double(incomeInput) ?? 0) * (savingsPercentage / 100)
+
+                    Text("You'll save $\(savingsAmount, specifier: "%.2f") per month!").font(.caption).foregroundStyle(.secondary)
+                }
+
                 Button("Next"){
-                    if let income = Double(incomeInput), let fixedExpenses = Double(fixedExpensesInput), let savingsPercentage = Double(savingsPercentageStr){
-                        
+                    if let income = Double(incomeInput), let fixedExpenses = Double(fixedExpensesInput) {
                         budgetManager.monthlyIncome = income
                         budgetManager.monthlyFixedExpenses = fixedExpenses
                         budgetManager.monthlySavingsGoalDecimal = savingsPercentage / 100
+                        currentStep += 1
                     }
                     else{
                         print("Invalid input")
                     }
                 }
             }
-            
+
         }
     }
 }
