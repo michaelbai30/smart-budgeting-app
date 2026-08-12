@@ -13,6 +13,7 @@ enum TransactionType: Codable{
 }
 
 enum TransactionCategory: CaseIterable, Codable{
+    case misc
     case groceries
     case dining
     case entertainment
@@ -20,18 +21,17 @@ enum TransactionCategory: CaseIterable, Codable{
     case housing
     case utilities
     case insurance
-    case other
     
     var displayName: String{
         switch self{
-        case .groceries: return "Groceries"
-        case .dining: return "Dining"
-        case .entertainment: return "Entertainment"
-        case .transportation: return "Transportation"
-        case .housing: return "Housing"
-        case .utilities: return "Utilities"
-        case .insurance: return "Insurance"
-        case .other: return "Other"
+            case .misc: return "Misc."
+            case .groceries: return "Groceries"
+            case .dining: return "Dining"
+            case .entertainment: return "Entertainment"
+            case .transportation: return "Transportation"
+            case .housing: return "Housing"
+            case .utilities: return "Utilities"
+            case .insurance: return "Insurance"
         }
     }
 }
@@ -41,10 +41,10 @@ class Transaction{
     var date: Date
     var amount: Double
     var label: String?
-    var category: TransactionCategory?
+    var category: TransactionCategory
     var type: TransactionType
     
-    init(date: Date, amount: Double, label: String? = nil, category: TransactionCategory? = nil, type: TransactionType) {
+    init(date: Date, amount: Double, label: String? = nil, category: TransactionCategory = .misc, type: TransactionType) {
         self.date = date
         self.amount = amount
         self.label = label

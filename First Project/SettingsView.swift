@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SettingsView: View{
     @Environment(\.dismiss) var dismiss
-    var budgetManager: BudgetManager // A struct member with no default value must be given
+    var budgetManager: BudgetManager
 
     @State private var incomeInput: String = ""
     @State private var expensesInput: String = ""

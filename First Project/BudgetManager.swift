@@ -18,6 +18,7 @@ class BudgetManager{
         self.currentDiscretionaryFunds = currentDiscretionaryFunds
         self.lastLoginDate = lastLoginDate
     }
+
     // User settings
     var monthlyIncome: Double = 0.0
     var monthlyFixedExpenses: Double = 0.0
@@ -27,17 +28,16 @@ class BudgetManager{
     var currentDiscretionaryFunds: Double = 0.0
     var lastLoginDate: Date?
     var transactions: [Transaction] = []
-    
+
+    // Derived vars
     // How much is left after expenses and savings
     var monthlyDiscretionary: Double {monthlyIncome - monthlyFixedExpenses - (monthlyIncome * monthlySavingsGoalDecimal)}
-
     var dailyBudget: Double{monthlyDiscretionary / 30}
-    
     var isSetupComplete: Bool {
         monthlyIncome > 0 && monthlyFixedExpenses > 0 && monthlySavingsGoalDecimal > 0
     }
 
-    // METHODS
+    // --- Methods ---
     func checkAndAwardDailyBonus() -> Bool{
         // startOfDay returns the same day but standardized to midnight.
         let today = Calendar.current.startOfDay(for: Date())
@@ -67,14 +67,16 @@ class BudgetManager{
         lastLoginDate = Date()
     }
 
-    func logExpense(amount: Double){
+    func logExpense(amount: Double, label: String?, category: TransactionCategory?){
         currentDiscretionaryFunds -= amount
-        let transaction = Transaction(date: Date(), amount: amount, type: .expense)
+        let transaction = Transaction(date: Date(), amount: amount, label: label, category: category ?? .misc, type: .expense)
         transactions.append(transaction)
     }
+
     func logDeposit(amount: Double){
         currentDiscretionaryFunds += amount
         let transaction = Transaction(date: Date(), amount: amount, type: .deposit)
         transactions.append(transaction)
     }
+
 }

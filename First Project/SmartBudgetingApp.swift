@@ -1,6 +1,6 @@
 //
-//  First_ProjectApp.swift
-//  First Project
+//  SmartBudgetingApp.swift
+//
 //
 //  Created by Michael Bai on 8/9/26.
 //
@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct First_ProjectApp: App {
+struct SmartBudgetingApp: App {
     
     var sharedModelContainer: ModelContainer = {
 

@@ -13,14 +13,13 @@ struct HomeView: View{
     @State private var transactionMode: TransactionType = .expense
     @State private var amount: String = ""
     @State private var label: String = ""
-    @State private var category: TransactionCategory? = nil
+    @State private var category: TransactionCategory? = .misc
 
     @State private var showSettingsMenu: Bool = false
 
     // Get bonus alert
     @State private var showBonusAlert = false
     @State private var dailyBonusGetMessage = ""
-
     private var isAmountValid: Bool{
         if let value = Double(amount) {
             return value > 0
@@ -96,13 +95,14 @@ struct HomeView: View{
     private func confirmTransaction(){
         if let value = Double(amount) {
             if transactionMode == .expense {
-                budgetManager.logExpense(amount: value)
+                budgetManager.logExpense(amount: value, label: label, category: category)
             }
             else {
                 budgetManager.logDeposit(amount: value)
             }
             amount = ""
             label = ""
+            category = nil
         }
     }
 }
