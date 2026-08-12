@@ -31,7 +31,9 @@ struct ContentView: View {
     }
     var body: some View {
         if budgetManager.isSetupComplete{
-            HomeView(budgetManager: budgetManager)
+            NavigationStack{
+                HomeView(budgetManager: budgetManager)
+            }
         }
         else{
             OnboardingView(budgetManager: budgetManager)

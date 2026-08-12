@@ -26,6 +26,7 @@ class BudgetManager{
     // Account state
     var currentDiscretionaryFunds: Double = 0.0
     var lastLoginDate: Date?
+    var transactions: [Transaction] = []
     
     // How much is left after expenses and savings
     var monthlyDiscretionary: Double {monthlyIncome - monthlyFixedExpenses - (monthlyIncome * monthlySavingsGoalDecimal)}
@@ -68,5 +69,12 @@ class BudgetManager{
 
     func logExpense(amount: Double){
         currentDiscretionaryFunds -= amount
+        let transaction = Transaction(date: Date(), amount: amount, type: .expense)
+        transactions.append(transaction)
+    }
+    func logDeposit(amount: Double){
+        currentDiscretionaryFunds += amount
+        let transaction = Transaction(date: Date(), amount: amount, type: .deposit)
+        transactions.append(transaction)
     }
 }
