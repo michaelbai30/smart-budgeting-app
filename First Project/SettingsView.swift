@@ -22,10 +22,10 @@ struct SettingsView: View{
     var body: some View{
         Form{
             Section("Monthly Income"){
-                TextField("0.0", text:$incomeInput)
+                TextField("", text:$incomeInput)
             }
             Section("Recurring Expenses"){
-                TextField("0.0", text:$recurringExpensesInput)
+                TextField("", text:$recurringExpensesInput)
             }
             Section("Savings Goal"){
                 VStack(alignment: .leading, spacing: 12){
