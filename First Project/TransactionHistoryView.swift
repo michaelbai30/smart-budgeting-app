@@ -20,10 +20,9 @@ struct TransactionHistoryView: View {
                 else{
                     Text("Deposit")
                 }
+                Text(transaction.label ?? "No label")
+                Text(transaction.category.displayName)  
             }
         }
     }
-}
-#Preview{
-    TransactionHistoryView(budgetManager: BudgetManager())
 }

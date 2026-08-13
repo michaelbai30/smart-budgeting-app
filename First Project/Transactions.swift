@@ -7,12 +7,12 @@
 import Foundation
 import SwiftData
 
-enum TransactionType: Codable{
+enum TransactionType: String, Codable{
     case expense
     case deposit
 }
 
-enum TransactionCategory: CaseIterable, Codable{
+enum TransactionCategory: String, CaseIterable, Codable{
     case misc
     case groceries
     case dining
@@ -52,4 +52,3 @@ class Transaction{
         self.type = type
     }
 }
-
