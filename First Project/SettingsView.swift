@@ -12,7 +12,7 @@ struct SettingsView: View{
     var budgetManager: BudgetManager
 
     @State private var incomeInput: String = ""
-    @State private var expensesInput: String = ""
+    @State private var recurringExpensesInput: String = ""
     @State private var savingsPercentage: Double = 20.0 // Default value
 
     private var savingsAmount: Double{
@@ -21,11 +21,11 @@ struct SettingsView: View{
 
     var body: some View{
         Form{
-            Section(){
-                TextField("Monthly Income", text:$incomeInput)
+            Section("Monthly Income"){
+                TextField("0.0", text:$incomeInput)
             }
-            Section(){
-                TextField("Fixed Expenses", text:$expensesInput)
+            Section("Recurring Expenses"){
+                TextField("0.0", text:$recurringExpensesInput)
             }
             Section("Savings Goal"){
                 VStack(alignment: .leading, spacing: 12){
@@ -42,9 +42,9 @@ struct SettingsView: View{
             Section{
                 Button("Save Changes"){
                     if let income = Double(incomeInput),
-                       let expenses = Double(expensesInput) {
+                       let expenses = Double(recurringExpensesInput) {
                         budgetManager.monthlyIncome = income
-                        budgetManager.monthlyFixedExpenses = expenses
+                        budgetManager.monthlyRecurringExpenses = expenses
                         budgetManager.monthlySavingsGoalDecimal = savingsPercentage / 100
 
                         dismiss()
@@ -54,7 +54,7 @@ struct SettingsView: View{
         // Load all current values
         }.onAppear{
             incomeInput = String(budgetManager.monthlyIncome)
-            expensesInput = String(budgetManager.monthlyFixedExpenses)
+            recurringExpensesInput = String(budgetManager.monthlyRecurringExpenses)
             savingsPercentage = budgetManager.monthlySavingsGoalDecimal * 100
         }
     }

@@ -16,6 +16,7 @@ struct SmartBudgetingApp: App {
         // List of all @Model classes to be saved
         let schema = Schema([
             BudgetManager.self, // The class itself, not an instance
+            Transaction.self
         ])
 
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)

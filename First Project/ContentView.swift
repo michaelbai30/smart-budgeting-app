@@ -14,7 +14,7 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    // @State: The data can change. When it changes, redraw the view. A property of the struct
+
     @Query private var budgetManagers: [BudgetManager]
     @Environment(\.modelContext) private var modelContext // Save to model
     

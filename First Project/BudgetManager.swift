@@ -10,10 +10,9 @@ import SwiftData
 
 @Model
 class BudgetManager{
-    
-    init(monthlyIncome: Double=0.0, monthlyFixedExpenses: Double=0.0, monthlySavingsGoalDecimal: Double=0.0, currentDiscretionaryFunds: Double=0.0, lastLoginDate: Date? = nil){
+    init(monthlyIncome: Double=0.0, monthlyRecurringExpenses: Double=0.0, monthlySavingsGoalDecimal: Double=0.0, currentDiscretionaryFunds: Double=0.0, lastLoginDate: Date? = nil){
         self.monthlyIncome = monthlyIncome
-        self.monthlyFixedExpenses = monthlyFixedExpenses
+        self.monthlyRecurringExpenses = monthlyRecurringExpenses
         self.monthlySavingsGoalDecimal = monthlySavingsGoalDecimal
         self.currentDiscretionaryFunds = currentDiscretionaryFunds
         self.lastLoginDate = lastLoginDate
@@ -21,7 +20,7 @@ class BudgetManager{
 
     // User settings
     var monthlyIncome: Double = 0.0
-    var monthlyFixedExpenses: Double = 0.0
+    var monthlyRecurringExpenses: Double = 0.0
     var monthlySavingsGoalDecimal: Double = 0.0
     
     // Account state
@@ -31,10 +30,10 @@ class BudgetManager{
 
     // Derived vars
     // How much is left after expenses and savings
-    var monthlyDiscretionary: Double {monthlyIncome - monthlyFixedExpenses - (monthlyIncome * monthlySavingsGoalDecimal)}
+    var monthlyDiscretionary: Double {monthlyIncome - monthlyRecurringExpenses - (monthlyIncome * monthlySavingsGoalDecimal)}
     var dailyBudget: Double{monthlyDiscretionary / 30}
     var isSetupComplete: Bool {
-        monthlyIncome > 0 && monthlyFixedExpenses > 0 && monthlySavingsGoalDecimal > 0
+        monthlyIncome > 0 && monthlyRecurringExpenses > 0 && monthlySavingsGoalDecimal > 0
     }
 
     // --- Methods ---

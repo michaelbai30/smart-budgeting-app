@@ -9,7 +9,7 @@ import SwiftUI
 struct OnboardingView: View {
     var budgetManager: BudgetManager
     @State var incomeInput: String = ""
-    @State var fixedExpensesInput: String = ""
+    @State var recurringExpensesInput: String = ""
     @State var savingsPercentage: Double = 20.0
     
     @State var currentStep: Int = 1 // Which screen am I on?
@@ -28,7 +28,7 @@ struct OnboardingView: View {
         else if currentStep == 2 {
             VStack{
                 Text("Step \(currentStep) out of 3")
-                TextField("Enter your monthly fixed expenses in dollars", text: $fixedExpensesInput)
+                TextField("Enter your monthly recurring (fixed) expenses in dollars", text: $recurringExpensesInput)
                 
                 Button("Next"){
                     currentStep += 1
@@ -49,9 +49,9 @@ struct OnboardingView: View {
                 }
 
                 Button("Next"){
-                    if let income = Double(incomeInput), let fixedExpenses = Double(fixedExpensesInput) {
+                    if let income = Double(incomeInput), let recurringExpenses = Double(recurringExpensesInput) {
                         budgetManager.monthlyIncome = income
-                        budgetManager.monthlyFixedExpenses = fixedExpenses
+                        budgetManager.monthlyRecurringExpenses = recurringExpenses
                         budgetManager.monthlySavingsGoalDecimal = savingsPercentage / 100
                         currentStep += 1
                     }
