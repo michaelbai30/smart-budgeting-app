@@ -61,7 +61,10 @@ struct HomeView: View{
             Button("Confirm"){
                 confirmTransaction()
             }.disabled(!isAmountValid).opacity(isAmountValid ? 1.0 : 0.5)
-
+            
+            NavigationLink("Transaction Statistics"){
+                StatsView(budgetManager: budgetManager)
+            }
             // Pushes the Transaction history view onto the stack
             NavigationLink("Transaction History"){
                 TransactionHistoryView(budgetManager: budgetManager)
