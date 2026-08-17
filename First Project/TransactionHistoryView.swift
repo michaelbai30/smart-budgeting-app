@@ -10,19 +10,23 @@ import SwiftUI
 struct TransactionHistoryView: View {
     var budgetManager: BudgetManager
     var body: some View{
-        List(budgetManager.transactions){transaction in
-            VStack{
-                Text(transaction.date, style:.date)
-                Text("$\(transaction.amount, specifier: "%.2f")")
-                if transaction.type == .expense{
-                    Text("Expense")
+        List(budgetManager.transactions.sorted(by: {$0.date > $1.date})){transaction in
+            HStack{
+                VStack(alignment: .leading){
+                    Text(transaction.label ?? "No Label")
+                    Text(transaction.date, style:.date).font(.caption).foregroundStyle(Color.secondary)
                 }
-                else{
-                    Text("Deposit")
+                Spacer()
+                VStack(alignment: .trailing){
+                    Text("$\(transaction.amount, specifier: "%.2f")").fontWeight(.semibold)
+                    Text(transaction.category.displayName).font(.caption).foregroundStyle(Color.secondary)
                 }
-                Text(transaction.label ?? "No label")
-                Text(transaction.category.displayName)  
-            }
-        }
+                
+            }.listRowBackground(transaction.type == .expense ? Color.orange.opacity(0.1) : Color.green.opacity(0.1))
+        }.navigationTitle(Text("Transaction History"))
     }
+}
+
+#Preview {
+    TransactionHistoryView(budgetManager: BudgetManager())
 }
