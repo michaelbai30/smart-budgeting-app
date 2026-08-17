@@ -31,7 +31,10 @@ class BudgetManager{
     // Derived vars
     // How much is left after expenses and savings
     var monthlyDiscretionary: Double {monthlyIncome - monthlyRecurringExpenses - (monthlyIncome * monthlySavingsGoalDecimal)}
-    var dailyBudget: Double{monthlyDiscretionary / 30}
+    var daysInCurrentMonth: Int {
+        Calendar.current.range(of: .day, in: .month, for: Date())?.count ?? 30
+    }
+    var dailyBudget: Double{monthlyDiscretionary / Double(daysInCurrentMonth)}
     var isSetupComplete: Bool {
         monthlyIncome > 0 && monthlyRecurringExpenses > 0 && monthlySavingsGoalDecimal > 0
     }
@@ -74,7 +77,7 @@ class BudgetManager{
 
     func logDeposit(amount: Double){
         currentDiscretionaryFunds += amount
-        let transaction = Transaction(date: Date(), amount: amount, type: .deposit)
+        let transaction = Transaction(date: Date(), amount: amount, label: "Deposit", type: .deposit)
         transactions.append(transaction)
     }
 
