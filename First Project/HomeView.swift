@@ -69,9 +69,7 @@ struct HomeView: View{
             NavigationLink("Transaction History"){
                 TransactionHistoryView(budgetManager: budgetManager)
             }
-            Button("Settings"){
-                showSettingsMenu = true // trigger the sheet
-            }.sheet(isPresented: $showSettingsMenu){
+            NavigationLink("Settings"){
                 SettingsView(budgetManager: budgetManager)
             }
             if alreadyClaimedBonus{
