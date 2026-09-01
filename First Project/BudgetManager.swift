@@ -10,9 +10,8 @@ import SwiftData
 
 @Model
 class BudgetManager{
-    init(monthlyIncome: Double=0.0, monthlyRecurringExpenses: Double=0.0, monthlySavingsGoalDecimal: Double=0.0, currentDiscretionaryFunds: Double=0.0, lastLoginDate: Date? = nil){
+    init(monthlyIncome: Double=0.0, monthlySavingsGoalDecimal: Double=0.0, currentDiscretionaryFunds: Double=0.0, lastLoginDate: Date? = nil){
         self.monthlyIncome = monthlyIncome
-        self.monthlyRecurringExpenses = monthlyRecurringExpenses
         self.monthlySavingsGoalDecimal = monthlySavingsGoalDecimal
         self.currentDiscretionaryFunds = currentDiscretionaryFunds
         self.lastLoginDate = lastLoginDate
@@ -20,23 +19,31 @@ class BudgetManager{
 
     // User settings
     var monthlyIncome: Double = 0.0
-    var monthlyRecurringExpenses: Double = 0.0
     var monthlySavingsGoalDecimal: Double = 0.0
-    
+
+    var recurringExpenses: [RecurringExpense] = []
+
     // Account state
     var currentDiscretionaryFunds: Double = 0.0
     var lastLoginDate: Date?
     var transactions: [Transaction] = []
 
     // Derived vars
+    // Computed so it's always in sync with whatever is in recurringExpenses
+    var monthlyRecurringExpenses: Double {
+        recurringExpenses.reduce(0) { $0 + $1.amount }
+    }
+
     // How much is left after expenses and savings
     var monthlyDiscretionary: Double {monthlyIncome - monthlyRecurringExpenses - (monthlyIncome * monthlySavingsGoalDecimal)}
     var daysInCurrentMonth: Int {
         Calendar.current.range(of: .day, in: .month, for: Date())?.count ?? 30
     }
     var dailyBudget: Double{monthlyDiscretionary / Double(daysInCurrentMonth)}
+
+    // Expenses and savings are technically optional
     var isSetupComplete: Bool {
-        monthlyIncome > 0 && monthlyRecurringExpenses > 0 && monthlySavingsGoalDecimal > 0
+        monthlyIncome > 0
     }
 
     // --- Methods ---
