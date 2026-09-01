@@ -10,20 +10,19 @@ import ConfettiSwiftUI
 
 struct HomeView: View{
     var budgetManager: BudgetManager
-    
-    @State private var alreadyClaimedBonus: Bool = false
 
-    @State private var transactionMode: TransactionType = .expense
+    @State private var alreadyClaimedBonus: Bool = false
+    @State private var showExpenseSheet: Bool = false
+    @State private var showDepositSheet: Bool = false
+
     @State private var amount: String = ""
     @State private var label: String = ""
     @State private var category: TransactionCategory = .misc
 
-    @State private var showSettingsMenu: Bool = false
     @State private var showBonusAlert: Bool = false
     @State private var dailyBonusGetMessage: String = ""
-    
     @State private var confettiTrigger: Int = 0
-    
+
     var body: some View{
         VStack{
             // Show balance
@@ -40,43 +39,93 @@ struct HomeView: View{
 
             Divider().padding(.vertical)
 
-            // Show and Check Daily Reward
             Text("Daily Reward: $\(budgetManager.dailyBudget, specifier: "%.2f")").fontWeight(.semibold)
 
-            // Transactions
-            Picker("", selection: $transactionMode){
-                Text("Expense").tag(TransactionType.expense)
-                Text("Deposit").tag(TransactionType.deposit)
-            }
-            TextField(transactionMode == .expense ? "Enter amount spent" : "Enter amount to deposit", text: $amount).onSubmit{ confirmTransaction() }
-
-            if transactionMode == .expense{
-                TextField("Enter name for transaction (optional)", text: $label)
-                Picker("Category", selection: $category){
-                    ForEach(TransactionCategory.allCases, id: \.self){cat in
-                        Text(cat.displayName).tag(cat as TransactionCategory)
-                    }
+            HStack(spacing: 16) {
+                Button("Log Expense") {
+                    showExpenseSheet = true
+                }
+                Button("Deposit Funds") {
+                    showDepositSheet = true
                 }
             }
-            Button("Confirm"){
-                confirmTransaction()
-            }.disabled(!isAmountValid).opacity(isAmountValid ? 1.0 : 0.5)
-            
+            .padding(.top, 8)
+
             NavigationLink("Transaction Statistics"){
                 StatsView(budgetManager: budgetManager)
             }
-            // Pushes the Transaction history view onto the stack
             NavigationLink("Transaction History"){
                 TransactionHistoryView(budgetManager: budgetManager)
             }
             NavigationLink("Settings"){
                 SettingsView(budgetManager: budgetManager)
             }
+
             if alreadyClaimedBonus{
                 Text("You already claimed today's bonus!")
             }
-            
-        }.alert(
+        }
+        // onDismiss runs when sheet closes for any reason (Cancel, swipe down, Confirm)
+    .sheet(isPresented: $showExpenseSheet, onDismiss: resetForm) {
+            NavigationStack {
+                Form {
+                    Section("Amount") {
+                        TextField("Enter amount spent", text: $amount).keyboardType(.decimalPad)
+                    }
+                    Section("Details (Optional)") {
+                        TextField("Label", text: $label)
+                        Picker("Category", selection: $category) {
+                            ForEach(TransactionCategory.allCases, id: \.self) { cat in
+                                Text(cat.displayName).tag(cat)
+                            }
+                        }
+                    }
+                    Section {
+                        Button("Confirm") {
+                            confirmTransaction(as: .expense)
+                            showExpenseSheet = false
+                        }
+                        .disabled(!isAmountValid)
+                        .opacity(isAmountValid ? 1.0 : 0.5)
+                    }
+                }
+                .navigationTitle("Log Expense")
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") {
+                            showExpenseSheet = false
+                        }
+                    }
+                }
+            }
+        }
+        .sheet(isPresented: $showDepositSheet, onDismiss: resetForm) {
+            NavigationStack {
+                Form {
+                    Section("Amount") {
+                        TextField("Enter amount to deposit", text: $amount)
+                            .keyboardType(.decimalPad)
+                    }
+                    Section {
+                        Button("Confirm") {
+                            confirmTransaction(as: .deposit)
+                            showDepositSheet = false
+                        }
+                        .disabled(!isAmountValid)
+                        .opacity(isAmountValid ? 1.0 : 0.5)
+                    }
+                }
+                .navigationTitle("Deposit Funds")
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") {
+                            showDepositSheet = false
+                        }
+                    }
+                }
+            }
+        }
+        .alert(
             "Daily Bonus",
             isPresented: $showBonusAlert,
             actions: {
@@ -87,7 +136,8 @@ struct HomeView: View{
             message: {
                 Text(dailyBonusGetMessage)
             }
-        ).onAppear(){
+        )
+        .onAppear(){
             let didGetBonus = budgetManager.checkAndAwardDailyBonus()
             if didGetBonus {
                 dailyBonusGetMessage = "You earned $\(String(format: "%.2f", budgetManager.dailyBudget)) to spend today!"
@@ -95,21 +145,29 @@ struct HomeView: View{
                 confettiTrigger += 1
                 alreadyClaimedBonus = true
             }
-        }.confettiCannon(trigger: $confettiTrigger, num: 50)
+        }
+        .confettiCannon(trigger: $confettiTrigger, num: 30)
     }
-    private func confirmTransaction(){
+
+    private func confirmTransaction(as transactionMode: TransactionType) {
         if let value = Double(amount) {
             if transactionMode == .expense {
-                budgetManager.logExpense(amount: value, label: label, category: category)
+                budgetManager.logExpense(amount: value, label: label.isEmpty ? nil : label, category: category)
             }
             else {
                 budgetManager.logDeposit(amount: value)
             }
-            amount = ""
-            label = ""
-            category = .misc
+            resetForm()
         }
     }
+
+    private func resetForm() {
+        amount = ""
+        label = ""
+        category = .misc
+    }
+
+    // Guards against empty string or non-numeric input
     private var isAmountValid: Bool{
         if let value = Double(amount) {
             return value > 0
@@ -117,6 +175,7 @@ struct HomeView: View{
         return false
     }
 }
+
 #Preview{
     HomeView(budgetManager: BudgetManager())
 }
