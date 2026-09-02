@@ -125,13 +125,7 @@ struct SettingsView: View {
                 }
             }
 
-            Section {
-                Button("Save Changes") {
-                    saveChanges()
-                }
-                .disabled(previewIncome > 0 && previewDaily <= 0)
-                .opacity(previewIncome > 0 && previewDaily <= 0 ? 0.5 : 1.0)
-            }
+            
         }
         .onAppear { loadCurrentValues() }
         .toolbar {
