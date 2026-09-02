@@ -203,7 +203,7 @@ struct OnboardingView: View {
         for entry in customEntries {
             if !entry.name.isEmpty, let amount = Double(entry.amount), amount > 0 {
                 let expense = RecurringExpense(name: entry.name, amount: amount)
-                modelContext.insert(expense)`
+                modelContext.insert(expense)
                 budgetManager.recurringExpenses.append(expense)
             }
         }
