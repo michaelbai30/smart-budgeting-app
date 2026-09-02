@@ -26,7 +26,7 @@ struct HomeView: View{
     var body: some View{
         VStack{
             // Show balance
-            Text("Your money!").font(.largeTitle).fontWeight(.bold)
+            Text("Your Money!").font(.largeTitle).fontWeight(.bold)
             if budgetManager.currentDiscretionaryFunds > 0.0{
                 Text("$\(budgetManager.currentDiscretionaryFunds, specifier: "%.2f")").font(.system(size: 48, weight: .bold, design: .rounded)).foregroundStyle(.green)
             }
@@ -35,6 +35,17 @@ struct HomeView: View{
             }
             else{
                 Text("$\(budgetManager.currentDiscretionaryFunds, specifier: "%.2f")").font(.system(size: 48, weight: .bold, design: .rounded)).foregroundStyle(.gray)
+            }
+            
+            Text("Today's Budget").font(.title2).fontWeight(.semibold)
+            if budgetManager.dailyBudgetLeft > 0.0{
+                Text("$\(budgetManager.dailyBudgetLeft, specifier: "%.2f")").font(.system(size: 24, weight: .semibold, design: .rounded)).foregroundStyle(.green)
+            }
+            else if budgetManager.dailyBudgetLeft < 0.0 {
+                Text("$\(budgetManager.dailyBudget - budgetManager.todaySpent, specifier: "%.2f")").font(.system(size: 24, weight: .semibold, design: .rounded)).foregroundStyle(.red)
+            }
+            else{
+                Text("$\(budgetManager.dailyBudgetLeft, specifier: "%.2f")").font(.system(size: 24, weight: .semibold, design: .rounded)).foregroundStyle(.gray)
             }
 
             Divider().padding(.vertical)
@@ -51,6 +62,9 @@ struct HomeView: View{
             }
             .padding(.top, 8)
 
+            NavigationLink("Weekly Spending"){
+                WeeklySpendingView(budgetManager: budgetManager)
+            }
             NavigationLink("Transaction Statistics"){
                 StatsView(budgetManager: budgetManager)
             }
